@@ -1,0 +1,60 @@
+---
+title: "Covid19 - Analysis"
+author: "Jiadi Huang"
+date: "3/20/2020"
+output: pdf_document
+---
+
+# An analysis of coronavirus in China
+
+An analysis of the current outbreak of the coronavirus happening in China using the data from https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset/data. The data is retrieved from 03/11/2019
+
+# Background
+Coronaviruses are a large family of viruses that are common in people and many different species of animals, including camels, cattle, cats, and bats. Rarely, animal coronaviruses can infect people and then spread between people such as with MERS-CoV, SARS-CoV, and now with this new virus.
+The coronavirus was first detected in China. On January 30, 2020, the International Health Regulations Emergency Committee of the World Health Organization (WHO) declared the outbreak a “public health emergency of international concernexternal icon” (PHEIC). On January 31, Health and Human Services Secretary Alex M. Azar II declared a public health emergency (PHE) for the United States to aid the nation’s healthcare community in responding to COVID-19. On March 11, WHO publiclyexternal icon characterized COVID-19 as a pandemic. On March 13, the President of the United States declared the COVID-19 outbreak a national emergency (information retrieved from CDC https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/summary.html)
+
+# Question
+Does a higher avilability of medical resources result in a lower death rate caused by the coronavirus?
+
+# Hypothesis
+My hypothesis is that the amount of resources that is avilable to treat coronavirus has a significant impact on the deathrate caused by the coronavirus.My hypothesis is that the amount of resources that is avilable to treat coronavirus has a significant impact on the deathrate caused by the coronavirus.
+
+I will be comparing the percent of population infected with the total death Rate. The percent of population infected will represent the medical resources avilable because with more people infected, less medical resources will be avilable to individuals.
+
+```{r}
+library(readxl)
+dat<-read_excel("covid19.xlsx")
+dat
+percentInfected<-dat$percentInfected
+lnpercentInfected = log(percentInfected)
+deathRate<-dat$deathRate
+lndeathRate = log(deathRate)
+plot(percentInfected, deathRate, xlab="percentInfected",ylab="deathRate", main="percentInfected vs. deathRate", xlim=c(0,0.000025))
+```
+
+Shows some form of linear relationship
+
+```{r}
+deathRate.lm<-lm(deathRate~percentInfected, data=dat)
+Fits<-fitted.values(deathRate.lm)
+Resids<-residuals(deathRate.lm)
+plot(Fits,Resids,xlab="Fits", ylab="Residuals", main="Residual Plot for deathRate.lm", xlim=c(0.01,0.015))
+```
+
+Homoscedasticity: Constant Variance is shown in the data
+
+```{r}
+library(car)
+qqPlot(Resids, main="qqPlot of First.lm")
+```
+
+Normality is shown through the qqplot.
+Linear regression is an appropriate model to model the data.
+
+
+```{r}
+summary(deathRate.lm)
+```
+
+# Conclusion
+with a p value of 0.00402, the variable percentInfected is signficant in predicting the deathRate. The r-squared value is 0.2597 which memans the percent of population infected explains 25.97% of the variation of the death Rate variable. The given information shows that the percent infected has a great impact on the death rate caused by coronavirus. The data supports my claim that the amount of resources that is avilable to treat coronavirus has a significant impact on the deathrate caused by the coronavirus. More medical resources for treating the coronavirus will result in a lower death rate.
